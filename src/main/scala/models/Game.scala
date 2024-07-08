@@ -34,18 +34,31 @@ class Game(
   }
 
   private def askForBet(): Int = {
-    val minBet = 10  // Define the minimum bet
-    println(s"Please enter your bet amount (min $minBet):")
-    val betAmount = scala.io.StdIn.readInt()
-    if (betAmount < minBet) {
-      throw new IllegalArgumentException(s"Bet amount must be at least $minBet")
+    val minBet = 10
+    val maxBet = 100
+    var validBet = false
+    var betAmount = 0
+
+    while (!validBet) {
+      try {
+        println(s"Please enter your bet amount (min $minBet, max $maxBet):")
+        betAmount = scala.io.StdIn.readInt()
+        if (betAmount < minBet) {
+          throw new IllegalArgumentException(s"Bet amount must be at least $minBet")
+        } else if (betAmount > maxBet) {
+          throw new IllegalArgumentException(s"Bet amount must be at most $maxBet")
+        } else if (betAmount > player.getChips) {
+          throw new IllegalArgumentException("Insufficient chips for the bet amount")
+        } else {
+          validBet = true
+        }
+      } catch {
+        case e: IllegalArgumentException => println(e.getMessage)
+        case _: NumberFormatException => println("Invalid input. Please enter a numeric value.")
+      }
     }
-    if (betAmount <= player.getChips) {
-      player.bet(betAmount)
-      betAmount
-    } else {
-      throw new IllegalArgumentException("Insufficient chips for the bet amount")
-    }
+    player.bet(betAmount)
+    betAmount
   }
 
   private def dealCommunityCards(): Game = {
