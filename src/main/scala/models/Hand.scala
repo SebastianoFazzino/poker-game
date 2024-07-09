@@ -14,11 +14,11 @@ class Hand(val cards: List[Card]) {
 
   def evaluateHand: HandScore = {
     if (isFlush && isStraight) HandScore.Flush
-    else if (groupedByRank.exists(_._2 == 3) && groupedByRank.exists(_._2 == 2)) HandScore.TwoPairs
-    else if (groupedByRank.exists(_._2 == 3)) HandScore.ThreeOfAKind
-    else if (groupedByRank.count(_._2 == 2) == 2) HandScore.OnePair
-    else if (isStraight) HandScore.Straight
     else if (isFlush) HandScore.Flush
+    else if (isStraight) HandScore.Straight
+    else if (groupedByRank.exists(_._2 == 3)) HandScore.ThreeOfAKind
+    else if (groupedByRank.count(_._2 == 2) == 2) HandScore.TwoPairs
+    else if (groupedByRank.exists(_._2 == 2)) HandScore.OnePair
     else HandScore.HighCard
   }
 
