@@ -4,6 +4,7 @@ class Player(val name: String, var hand: List[Card], var chips: Int) {
   def getName: String = name
   def getHand: List[Card] = hand
   def getChips: Int = chips
+  def startNewGame(): Unit = hand = List()
 
   def bet(amount: Int): Unit = {
     if (amount > chips) throw new IllegalArgumentException("Not enough chips")

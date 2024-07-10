@@ -82,6 +82,9 @@ class Game(
     val playerHand = new Hand(player.getHand ++ communityCards)
     val dealerHand = new Hand(dealer.getHand ++ communityCards)
 
+    playerHand.cards.sortBy(_.getValue).reverse
+    playerHand.cards.sortBy(_.getValue).reverse
+
     println(s"Player's hand: ${playerHand}")
     println(s"Dealer's hand: ${dealerHand}")
 
@@ -133,6 +136,8 @@ class Game(
 object Game {
   def createNewGame(player: Player, dealer: Dealer): Game = {
     val newDeck = new Deck().init()
+    player.startNewGame()
+    dealer.startNewGame()
     new Game(newDeck, List(), player, dealer, 0, 0, false)
   }
 }

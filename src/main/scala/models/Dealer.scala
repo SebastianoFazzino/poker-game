@@ -12,6 +12,7 @@ class Dealer(name: String, var hand: List[Card]) {
 
   def getName: String = name
   def getHand: List[Card] = hand
-
+  def startNewGame(): Unit = hand = List()
+  
   override def toString: String = s"$name with hand: ${hand.mkString(", ")}"
 }
