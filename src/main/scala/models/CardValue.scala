@@ -6,8 +6,16 @@ object CardValue {
     "9" -> 9, "10" -> 10, "Jack" -> 11, "Queen" -> 12, "King" -> 13, "Ace" -> 14
   )
 
-  val suits: List[String] = List("Hearts", "Diamonds", "Clubs", "Spades")
+  private val suitRank: Map[String, Int] = Map(
+    "Clubs" -> 1,
+    "Diamonds" -> 2,
+    "Hearts" -> 3,
+    "Spades" -> 4
+  )
+
+  val suits: List[String] = List("Clubs", "Diamonds", "Hearts", "Spades")
   val ranks: List[String] = values.keys.toList
 
   def getValue(rank: String): Int = values.getOrElse(rank, 0)
+  def getSuitRank(suit: String): Int = suitRank.getOrElse(suit, 0)
 }

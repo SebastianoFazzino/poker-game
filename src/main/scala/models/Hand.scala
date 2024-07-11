@@ -37,13 +37,23 @@ class Hand(val cards: List[Card]) {
     if (scoreComparison != 0) return scoreComparison
 
     thisScore match {
-      case HandScore.Flush => compareHighCard(other)
+      case HandScore.Flush => compareFlush(other)
       case HandScore.Straight => compareHighCard(other)
       case HandScore.ThreeOfAKind => compareThreeOfAKind(other)
       case HandScore.TwoPairs => compareTwoPairs(other)
       case HandScore.OnePair => compareOnePair(other)
       case HandScore.HighCard => compareHighCard(other)
     }
+  }
+
+  private def compareFlush(other: Hand): Int = {
+    val highCardComparison = compareHighCard(other)
+    if (highCardComparison != 0) return highCardComparison
+
+    // If high cards are the same, compare suits
+    val thisSuitRank = CardValue.getSuitRank(cards.head.getSuit)
+    val otherSuitRank = CardValue.getSuitRank(other.cards.head.getSuit)
+    thisSuitRank.compare(otherSuitRank)
   }
 
   private def compareHighCard(other: Hand): Int = {
