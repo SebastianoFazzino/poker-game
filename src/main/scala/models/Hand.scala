@@ -9,13 +9,18 @@ class Hand(val cards: List[Card]) {
   private def isFlush: Boolean = cards.map(_.getSuit).distinct.size == 1
 
   private def isStraight: Boolean = {
-    val values = sortedCards.map(card => CardValue.getValue(card.rank)).distinct
+    val values = cards.map(card => CardValue.getValue(card.rank)).distinct.sorted
+
     if (values.size != 5) {
       false
     } else {
-      val min = values.min
-      val max = values.max
-      max - min == 4
+      // Check for normal straight (Ace as high)
+      val normalStraight = values.zip(values.tail).forall { case (a, b) => b - a == 1 }
+
+      // Check for straight with Ace as low (Ace, 2, 3, 4, 5)
+      val aceLowStraight = values.sorted == List(2, 3, 4, 5, 14).sorted
+
+      normalStraight || aceLowStraight
     }
   }
 

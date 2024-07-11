@@ -31,6 +31,18 @@ class HandSpec extends AnyFlatSpec with Matchers {
     hand.evaluateHand shouldEqual HandScore.Straight
   }
 
+  it should "evaluate to a low ace straight" in {
+    val cards = List(
+      new Card("Hearts", "2"),
+      new Card("Diamonds", "3"),
+      new Card("Clubs", "4"),
+      new Card("Spades", "Ace"),
+      new Card("Hearts", "5")
+    )
+    val hand = new Hand(cards)
+    hand.evaluateHand shouldEqual HandScore.Straight
+  }
+
   it should "evaluate to three of a kind" in {
     val cards = List(
       new Card("Hearts", "2"),
