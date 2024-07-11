@@ -7,9 +7,16 @@ class Hand(val cards: List[Card]) {
   private val groupedByRank = sortedCards.groupBy(_.getRank).view.mapValues(_.size).toMap
 
   private def isFlush: Boolean = cards.map(_.getSuit).distinct.size == 1
+
   private def isStraight: Boolean = {
     val values = sortedCards.map(card => CardValue.getValue(card.rank)).distinct
-    values.size == 5 && values.zip(values.tail).forall { case (a, b) => b - a == 1 }
+    if (values.size != 5) {
+      false
+    } else {
+      val min = values.min
+      val max = values.max
+      max - min == 4
+    }
   }
 
   def evaluateHand: HandScore = {
