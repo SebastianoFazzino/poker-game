@@ -9,13 +9,18 @@ class Game(
             val pot: Int,
             val inGame: Boolean
           ) {
+
+  private val minBet = 10
+  private val maxBet = 100
+  
+  private def getCommunityCards: List[Card] = communityCards
+  private def getPlayer: Player = player
+  private def getDealer: Dealer = dealer
+  
   def getDeck: Deck = deck
-  def getCommunityCards: List[Card] = communityCards
-  def getPlayer: Player = player
-  def getDealer: Dealer = dealer
   def getBet: Int = bet
   def getPot: Int = pot
-
+  
   def resetGame(): Game = {
     val newDeck = new Deck().init()
     val newCommunityCards = List()
@@ -28,22 +33,19 @@ class Game(
 
   def startGame(bet: Int): Game = {
     val newDeck = new Deck().init()
-    player.bet(bet)
     val newPot = pot + bet
     val newGame = new Game(newDeck, communityCards, player, dealer, bet, newPot, true)
     newGame.dealPersonalCards()
     newGame
   }
 
-  def askForBet(): Int = {
-    val minBet = 10
-    val maxBet = 100
+  private def askForBet(): Int = {
     var validBet = false
     var betAmount = 0
 
     while (!validBet) {
       try {
-        println(s"Please enter your bet amount (min $minBet, max $maxBet):")
+        println(s"Player chips: ${player.getChips}\nPlease enter your bet amount (min $minBet, max $maxBet):")
         betAmount = scala.io.StdIn.readInt()
         if (betAmount < minBet) {
           throw new IllegalArgumentException(s"Bet amount must be at least $minBet")
@@ -63,12 +65,12 @@ class Game(
     betAmount
   }
 
-  def dealPersonalCards(): Unit = {
+  private def dealPersonalCards(): Unit = {
     player.receiveCards(deck.deal(2))
     dealer.receiveCards(deck.deal(2))
   }
 
-  def dealCommunityCards(): Game = {
+  private def dealCommunityCards(): Game = {
     val newCards = deck.deal(3)
     new Game(deck, newCards, player, dealer, bet, pot, true)
   }
@@ -78,7 +80,7 @@ class Game(
     new Game(deck, communityCards, player, dealer, bet, pot, true)
   }
 
-  def evaluateHands(): Unit = {
+  private def evaluateHands(): Unit = {
     val playerHand = new Hand(player.getHand ++ communityCards)
     val dealerHand = new Hand(dealer.getHand ++ communityCards)
 
@@ -90,15 +92,21 @@ class Game(
 
     val result = playerHand.compareHands(dealerHand)
     if (result > 0) {
-      println("Player wins!")
+      println(s"Player wins ${pot} chips!")
+      player.addChips(pot*2)
     } else if (result < 0) {
-      println("Dealer wins!")
+      println(s"Dealer wins, Player loses ${pot} chips.")
     } else {
       println("It's a tie!")
+      player.addChips(pot)
     }
   }
 
-  def continueGame(): Unit = {
+  private def continueGame(): Unit = {
+    if (player.getChips <= minBet) {
+      println("Player has not enough chips for playing another game. Game over!")
+      return
+    }
     println("Would you like to play another round? (yes/no)")
     val answer = scala.io.StdIn.readLine().trim.toLowerCase
     if (answer == "yes") {
@@ -140,4 +148,5 @@ object Game {
     dealer.startNewGame()
     new Game(newDeck, List(), player, dealer, 0, 0, false)
   }
+  
 }

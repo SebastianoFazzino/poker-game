@@ -10,6 +10,8 @@ class Player(val name: String, var hand: List[Card], var chips: Int) {
     if (amount > chips) throw new IllegalArgumentException("Not enough chips")
     chips -= amount
   }
+  
+  def addChips(amount: Int): Unit = chips += amount
 
   def receiveCards(newCards: List[Card]): Unit = hand = hand ++ newCards
 
