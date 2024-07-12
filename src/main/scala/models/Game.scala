@@ -12,19 +12,19 @@ class Game(
 
   private val minBet = 10
   private val maxBet = 100
-  
+
   private def getCommunityCards: List[Card] = communityCards
   private def getPlayer: Player = player
   private def getDealer: Dealer = dealer
-  
+
   def getDeck: Deck = deck
   def getBet: Int = bet
   def getPot: Int = pot
-  
+
   def resetGame(): Game = {
     val newDeck = new Deck().init()
     val newCommunityCards = List()
-    val newPlayer = new Player("Player", List(), 100)
+    val newPlayer = new Player(player.getName, List(), 100)
     val newDealer = new Dealer("Dealer", List())
     val newBet = 0
     val newPot = 0
@@ -45,7 +45,7 @@ class Game(
 
     while (!validBet) {
       try {
-        println(s"Player chips: ${player.getChips}\nPlease enter your bet amount (min $minBet, max $maxBet):")
+        println(s"${player.getName}'s chips: ${player.getChips}\nPlease enter your bet amount (min $minBet, max $maxBet):")
         betAmount = scala.io.StdIn.readInt()
         if (betAmount < minBet) {
           throw new IllegalArgumentException(s"Bet amount must be at least $minBet")
@@ -87,12 +87,12 @@ class Game(
     playerHand.cards.sortBy(_.getValue).reverse
     playerHand.cards.sortBy(_.getValue).reverse
 
-    println(s"Player's hand: ${playerHand}")
+    println(s"${player.getName}'s hand: ${playerHand}")
     println(s"Dealer's hand: ${dealerHand}")
 
     val result = playerHand.compareHands(dealerHand)
     if (result > 0) {
-      println(s"Player wins ${pot} chips!")
+      println(s"${player.getName} wins ${pot} chips!")
       player.addChips(pot*2)
     } else if (result < 0) {
       println(s"Dealer wins, Player loses ${pot} chips.")
@@ -104,7 +104,7 @@ class Game(
 
   private def continueGame(): Unit = {
     if (player.getChips <= minBet) {
-      println("Player has not enough chips for playing another game. Game over!")
+      println(s"${player.getName} has not enough chips for playing another game. Game over!")
       return
     }
     println("Would you like to play another round? (yes/no)")
@@ -121,10 +121,10 @@ class Game(
     println("Starting a new game...")
     try {
       val betAmount = askForBet()  // Ask player for a bet
-      println(s"Player placed a bet of $betAmount")
+      println(s"${player.getName} placed a bet of $betAmount")
 
       val gameWithInitialBet = startGame(betAmount)  // Start the game with the player's bet
-      println(s"Player's hand: ${gameWithInitialBet.getPlayer.getHand.mkString(", ")}")
+      println(s"${player.getName}'s hand: ${gameWithInitialBet.getPlayer.getHand.mkString(", ")}")
       println(s"Dealer's hand: ${gameWithInitialBet.getDealer.getHand.mkString(", ")}")
 
       val gameWithCommunityCards = gameWithInitialBet.dealCommunityCards()  // Deal community cards
@@ -148,5 +148,5 @@ object Game {
     dealer.startNewGame()
     new Game(newDeck, List(), player, dealer, 0, 0, false)
   }
-  
+
 }
