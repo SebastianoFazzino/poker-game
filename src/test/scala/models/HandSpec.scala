@@ -55,6 +55,35 @@ class HandSpec extends AnyFlatSpec with Matchers {
     hand.evaluateHand shouldEqual HandScore.ThreeOfAKind
   }
 
+  it should "compare hands with Three of a Kind correctly" in {
+    val hand1 = new Hand(List(
+      new Card("Hearts", "3"),
+      new Card("Diamonds", "3"),
+      new Card("Clubs", "4"),
+      new Card("Spades", "3"),
+      new Card("Hearts", "6")
+    ))
+    val hand2 = new Hand(List(
+      new Card("Hearts", "2"),
+      new Card("Diamonds", "2"),
+      new Card("Clubs", "8"),
+      new Card("Spades", "King"),
+      new Card("Hearts", "2")
+    ))
+
+    val hand3 = new Hand(List(
+      new Card("Hearts", "4"),
+      new Card("Diamonds", "4"),
+      new Card("Clubs", "4"),
+      new Card("Spades", "3"),
+      new Card("Hearts", "2")
+    ))
+
+    hand1.compareHands(hand2) shouldEqual 1 // Three of a Kind of 3s beats Three of a Kind of 2s
+    hand2.compareHands(hand3) shouldEqual -1 // Three of a Kind of 2s loses to Three of a Kind of 4s
+    hand3.compareHands(hand1) shouldEqual 1 // Three of a Kind of 4s beats Three of a Kind of 3s
+  }
+
   it should "evaluate to two pairs" in {
     val cards = List(
       new Card("Hearts", "2"),
