@@ -1,6 +1,6 @@
 package models
 
-class Dealer(name: String, var hand: List[Card]) {
+class Dealer(name: String, var hand: List[Card] = List()) {
   
   def receiveCards(newCards: List[Card]): Unit = hand = hand ++ newCards
 

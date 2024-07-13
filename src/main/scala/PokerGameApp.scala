@@ -4,8 +4,8 @@ import models.{Dealer, Deck, Game, Player}
 
   def createNewGame(playerName: String): Game = {
     val newDeck = new Deck().init()
-    val player = new Player(playerName, List(), 100)
-    val dealer = new Dealer("Dealer", List())
+    val player = new Player(playerName)
+    val dealer = new Dealer("Dealer")
     new Game(newDeck, List(), player, dealer, 0, 0, false)
   }
 

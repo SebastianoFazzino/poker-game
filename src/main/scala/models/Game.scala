@@ -23,16 +23,6 @@ class Game(
   def getBet: Int = bet
   def getPot: Int = pot
 
-  def resetGame(): Game = {
-    val newDeck = new Deck().init()
-    val newCommunityCards = List()
-    val newPlayer = new Player(player.getName, List(), 100)
-    val newDealer = new Dealer("Dealer", List())
-    val newBet = 0
-    val newPot = 0
-    new Game(newDeck, newCommunityCards, newPlayer, newDealer, newBet, newPot, true)
-  }
-
   private def startGame(bet: Int): Game = {
     val newPot = pot + bet
     val newGame = new Game(deck, communityCards, player, dealer, bet, newPot, true)
@@ -110,7 +100,7 @@ class Game(
 
     if (result > 0) {
       println(s"${player.getName} wins ${pot} chips with ${playerHand.getHandScore}!")
-      player.addChips(bet *2)
+      player.winHand(bet *2)
 
     } else if (result < 0) {
       println(s"Dealer wins with ${dealerHand.getHandScore}, Player loses ${pot} chips.")
@@ -134,7 +124,8 @@ class Game(
       val newGame = createNewGame(player, dealer)
       newGame.gameLoop()
     } else {
-      println("Thanks for playing!")
+      println(s"\n${player.getName} leaves the game with ${player.getChips} chips and ${player.getTotalWins} wins.")
+      println("\nThanks for playing!\n")
     }
   }
 
