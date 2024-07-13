@@ -7,7 +7,7 @@ class HandSpec extends AnyFlatSpec with Matchers {
 
   // Check if evaluateHand returns the correct HandScore
 
-  "Hand" should "evaluate to a flush" in {
+  it should "evaluate to a flush" in {
     val cards = List(
       new Card("Hearts", "2"),
       new Card("Hearts", "4"),
