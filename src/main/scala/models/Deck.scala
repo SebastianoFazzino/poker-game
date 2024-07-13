@@ -3,7 +3,7 @@ package models
 import scala.util.Random
 
 class Deck {
-  private var cards: List[Card] = List()
+  var cards: List[Card] = List()
 
   def init(): Deck = {
     cards = for {
