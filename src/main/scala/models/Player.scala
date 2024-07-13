@@ -12,7 +12,7 @@ class Player(val name: String, var hand: List[Card], var chips: Int) {
   }
   
   def addChips(amount: Int): Unit = chips += amount
-
+  
   def receiveCards(newCards: List[Card]): Unit = hand = hand ++ newCards
 
   override def toString: String = s"$name: $hand (Chips: $chips)"

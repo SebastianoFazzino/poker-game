@@ -6,6 +6,8 @@ class Hand(val cards: List[Card]) {
   private val sortedCards = cards.sortBy(card => CardValue.getValue(card.rank)).reverse
   private val groupedByRank = sortedCards.groupBy(_.getRank).view.mapValues(_.size).toMap
 
+  def getHandScore: HandScore = evaluateHand
+  
   private def isFlush: Boolean = cards.map(_.getSuit).distinct.size == 1
 
   private def isStraight: Boolean = {
