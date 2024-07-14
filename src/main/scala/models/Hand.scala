@@ -99,4 +99,5 @@ class Hand(val cards: List[Card]) {
   }
 
   override def toString: String = s"Cards: ${sortedCards.mkString(", ")} with score ${evaluateHand}"
+
 }

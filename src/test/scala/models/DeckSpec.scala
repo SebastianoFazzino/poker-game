@@ -1,14 +1,11 @@
 package models
 
-import models.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.funsuite.AnyFunSuite
 
-import scala.compiletime.uninitialized
-
 class DeckSpec extends AnyFunSuite with BeforeAndAfterEach {
 
-  var deck: Deck = uninitialized
+  var deck: Deck = _
 
   override def beforeEach(): Unit = {
     deck = new Deck().init()

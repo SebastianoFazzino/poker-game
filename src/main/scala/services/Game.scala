@@ -1,6 +1,13 @@
-package models
+package services
 
-import models.Game.createNewGame
+import models.HandScore.HandScore
+import models._
+import repositories.GameRepositorySingleton
+import repositories.documents.{DealerDocument, GameDocument, PlayerDocument}
+import services.Game.createNewGame
+
+import java.time.LocalDateTime
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class Game(
             val deck: Deck,
@@ -8,24 +15,19 @@ class Game(
             val player: Player,
             val dealer: Dealer,
             val bet: Int,
-            val pot: Int,
-            val inGame: Boolean
+            val pot: Int
           ) {
 
   private val minBet = 5
   private val maxBet = 100
+  private var winnerName: String = ""
+  private var higherScore: Option[HandScore] = None
 
   private def getCommunityCards: List[Card] = communityCards
-  private def getPlayer: Player = player
-  private def getDealer: Dealer = dealer
-
-  def getDeck: Deck = deck
-  def getBet: Int = bet
-  def getPot: Int = pot
 
   private def startGame(bet: Int): Game = {
     val newPot = pot + bet
-    val newGame = new Game(deck, communityCards, player, dealer, bet, newPot, true)
+    val newGame = new Game(deck, communityCards, player, dealer, bet, newPot)
     newGame
   }
 
@@ -72,7 +74,7 @@ class Game(
 
   private def dealCommunityCards(): Game = {
     val newCards = communityCards ++ deck.deal(3)
-    new Game(deck, newCards, player, dealer, bet, pot, true)
+    new Game(deck, newCards, player, dealer, bet, pot)
   }
 
   private def revealDealerHand(): Unit = {
@@ -101,13 +103,19 @@ class Game(
     if (result > 0) {
       println(s"${player.getName} wins ${pot} chips with ${playerHand.getHandScore}!")
       player.winHand(bet *2)
+      winnerName = player.getName
+      higherScore = Some(playerHand.getHandScore)
 
     } else if (result < 0) {
       println(s"Dealer wins with ${dealerHand.getHandScore}, Player loses ${pot} chips.")
+      winnerName = dealer.getName
+      higherScore = Some(dealerHand.getHandScore)
 
     } else {
       println("It's a tie!")
       player.addChips(bet)
+      winnerName = "Tie"
+      higherScore = Some(playerHand.getHandScore)
     }
 
     printSeparator()
@@ -153,6 +161,13 @@ class Game(
 
           gameWithCommunityCards.evaluateHands()  // Evaluate hands
 
+          try {
+            // Save the game to the database
+            gameWithCommunityCards.saveGame()
+          } catch {
+            case e: Exception => println(s"Error saving game: ${e.getMessage}")
+          }
+
           Thread.sleep(1000)
 
           gameWithCommunityCards.continueGame()  // Ask if the player wants to play another round
@@ -163,6 +178,37 @@ class Game(
       }
     } catch {
       case e: Exception => println(s"Error: ${e.getMessage}")
+    }
+  }
+
+  // Save the current game state to the database
+  private def saveGame(): Unit = {
+
+    val gameDoc = GameDocument(
+      _id = None,
+      gameDateTime = LocalDateTime.now(),
+      players = List(
+        PlayerDocument(
+          player.getName,
+          player.getChips,
+          player.getHand.map(_.toString),
+          new Hand(player.getHand).getHandScore.toString
+        )
+      ),
+      dealer = DealerDocument(
+        dealer.getName,
+        dealer.getHand.map(_.toString),
+        new Hand(dealer.getHand).getHandScore.toString
+      ),
+      communityCards = communityCards.map(_.toString),
+      winner = winnerName,
+      higherScore = higherScore.map(_.toString).getOrElse(""),
+      pot = pot
+    )
+
+    GameRepositorySingleton.getRepository.saveGame(gameDoc).onComplete {
+      case scala.util.Success(_) => println("Game saved successfully.")
+      case scala.util.Failure(exception) => println(s"Failed to save game: ${exception.getMessage}")
     }
   }
 
@@ -178,7 +224,7 @@ object Game {
     val newDeck = new Deck().init()
     player.startNewGame()
     dealer.startNewGame()
-    new Game(newDeck, List(), player, dealer, 0, 0, false)
+    new Game(newDeck, List(), player, dealer, 0, 0)
   }
 
 }

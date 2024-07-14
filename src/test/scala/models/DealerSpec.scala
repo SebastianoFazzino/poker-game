@@ -1,8 +1,15 @@
 package models
 
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.funsuite.AnyFunSuite
 
-class DealerSpec extends AnyFunSuite {
+class DealerSpec extends AnyFunSuite with BeforeAndAfterEach {
+
+  var deck: Deck = _
+
+  override def beforeEach(): Unit = {
+    deck = new Deck().init()
+  }
 
   test("Dealer should receive cards from deck") {
     val dealer = new Dealer("Dealer")
@@ -17,7 +24,9 @@ class DealerSpec extends AnyFunSuite {
 
   test("Dealer should start a new game with an empty hand") {
     val dealer = new Dealer("Dealer")
-    dealer.receiveCards(List(Card("Spades", "A"), Card("Hearts", "2")))
+    val deck = new Deck().init()
+
+    dealer.receiveCards(deck.deal(2))
 
     assert(dealer.getHand.nonEmpty)
 
