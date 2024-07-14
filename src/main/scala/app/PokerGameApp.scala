@@ -15,6 +15,7 @@ object PokerGameApp {
     // Set the repository for the singleton object
     GameRepositorySingleton.setRepository(gameRepository)
 
+    // Create a new game
     def createNewGame(playerName: String): Game = {
       val newDeck = new Deck().init()
       val player = new Player(playerName)

@@ -20,12 +20,13 @@ class Game(
 
   private val minBet = 5
   private val maxBet = 100
-  private var winnerName: String = ""
-  private var higherScore: Option[HandScore] = None
 
   private def getCommunityCards: List[Card] = communityCards
 
-  private def startGame(bet: Int): Game = {
+  var winnerName: String = ""
+  var higherScore: Option[HandScore] = None
+
+  def startGame(bet: Int): Game = {
     val newPot = pot + bet
     val newGame = new Game(deck, communityCards, player, dealer, bet, newPot)
     newGame
@@ -58,8 +59,8 @@ class Game(
           }
 
         } catch {
-          case e: IllegalArgumentException => println(e.getMessage)
           case _: NumberFormatException => println("Invalid input. Please enter a numeric value.")
+          case e: IllegalArgumentException => println(e.getMessage)
         }
       }
       player.bet(betAmount)
@@ -67,21 +68,21 @@ class Game(
     }
   }
 
-  private def dealPersonalCards(): Unit = {
+  def dealPersonalCards(): Unit = {
     player.receiveCards(deck.deal(2))
     dealer.receiveCards(deck.deal(2))
   }
 
-  private def dealCommunityCards(): Game = {
+  def dealCommunityCards(): Game = {
     val newCards = communityCards ++ deck.deal(3)
     new Game(deck, newCards, player, dealer, bet, pot)
   }
 
-  private def revealDealerHand(): Unit = {
+  def revealDealerHand(): Unit = {
     println(s"Revealing dealer's cards: ${dealer.getHand.mkString(", ")}")
   }
 
-  private def evaluateHands(): Unit = {
+  def evaluateHands(): Unit = {
     val playerHand = new Hand(player.getHand ++ communityCards)
     val dealerHand = new Hand(dealer.getHand ++ communityCards)
 
@@ -107,7 +108,7 @@ class Game(
       higherScore = Some(playerHand.getHandScore)
 
     } else if (result < 0) {
-      println(s"Dealer wins with ${dealerHand.getHandScore}, Player loses ${pot} chips.")
+      println(s"Dealer wins with ${dealerHand.getHandScore}, ${player.getName} loses ${pot} chips.")
       winnerName = dealer.getName
       higherScore = Some(dealerHand.getHandScore)
 
@@ -121,7 +122,7 @@ class Game(
     printSeparator()
   }
 
-  private def continueGame(): Unit = {
+  def continueGame(): Unit = {
     if (player.getChips <= minBet) {
       println(s"${player.getName} has not enough chips for playing another game. Game over!")
       return
@@ -182,7 +183,7 @@ class Game(
   }
 
   // Save the current game state to the database
-  private def saveGame(): Unit = {
+  def saveGame(): Unit = {
 
     val gameDoc = GameDocument(
       _id = None,
