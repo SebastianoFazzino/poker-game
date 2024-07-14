@@ -113,6 +113,9 @@ By default, the application connects to MongoDB running on localhost:27017.
 <br>
 If you need to change the connection settings, update the `application.conf` file in the src/main/resources directory.
 
+#### Running Without MongoDB
+Note that you can also run the application without MongoDB.<br>In this case, you will see a few error messages related to the database connection, and the games will not be persisted.
+
 ### 4. Build the Project
 Once you have cloned the repository and installed the dependencies, build the project with:
 

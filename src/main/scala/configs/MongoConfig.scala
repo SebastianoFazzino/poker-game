@@ -30,7 +30,4 @@ class MongoConfig {
     new GameRepository(database)
   }
 
-  def closeClient(): Unit = {
-    client.close()
-  }
 }
